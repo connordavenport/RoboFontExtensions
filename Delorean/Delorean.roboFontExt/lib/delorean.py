@@ -12,6 +12,7 @@ from lib.UI.stepper import SliderEditIntStepper
 from defconAppKit.windows.baseWindow import BaseWindowController
 from mojo.events import addObserver, removeObserver, postEvent
 import sys
+import subprocess
 import os
 
 from mojo.roboFont import version
@@ -165,6 +166,10 @@ class Dialog(BaseWindowController):
         self.w.generate = vanilla.Button(
             (-35, -27, 27, lineHeight),
             u"⬇", callback=self.generateCallback)
+
+        self.w.copyGlyph = vanilla.Button(
+            (-70, -27, 27, lineHeight),
+            u"✿", callback=self.copyCallback)
 
         if CurrentGlyph() != None:
             g = CurrentGlyph()
@@ -339,6 +344,25 @@ class Dialog(BaseWindowController):
             
 
             print ('\nGlyph "'+instanceName+'" added to CurrentFont()')
+
+
+    def copyCallback(self, sender):
+        font1 = self.font1
+        font2 = self.font2
+
+        gname = self.w.gnameTextInput.get()
+
+        f = CurrentFont()
+
+        pcnt = int((self.value)*100)
+
+        instanceName = gname+'.'+str(pcnt)
+
+        if gname in font1 and gname in font2:
+            i = self.interp(self.value, gname)
+            i.name = instanceName
+
+            subprocess.run("pbcopy", universal_newlines=True, input=i.dumpToGLIF(2))
 
 
         
